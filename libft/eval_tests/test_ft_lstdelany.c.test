@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include "libft.h"
+
+int main(void)
+{
+	t_list *node1;
+	t_list *node2;
+	t_list *node3;
+	t_list *head;
+	
+	node1 = ft_lstnew("Hallo one", 10);
+	node2 = ft_lstnew("Hallo two", 10);
+	node3 = ft_lstnew("Hallo tre", 10);
+	
+	node1->next = node2;
+	node2->next = node3;
+	head = node1;
+	while(head)
+	{
+		printf("Before: %s\n", (char *)head->content);
+		head = head->next;
+	}
+	ft_lstdelany(&node1, node2);
+	head = node1;
+	printf("1\n");
+	while(head)
+	{
+		printf("After: %s\n", (char *)head->content);
+		head = head->next;
+	}
+	printf("2\n");
+	head = node1;
+	ft_lstdelany(&node1, node3);
+	while(head)
+	{
+		printf("After: %s\n", (char *)head->content);
+		head = head->next;
+	}
+	printf("3\n");
+	head = node1;
+	ft_lstdelany(&node1, node1);
+	while(head)
+	{
+		printf("After: %s\n", (char *)head->content);
+		head = head->next;
+	}
+	return (0);
+}

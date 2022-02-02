@@ -122,6 +122,8 @@ t_tetri *reader(char *arr)
 	i = 0;
 	bf = 1;
 	tetri = limits(arr, tetri);
+	tetri->width = tetri->x_max - tetri->x_min + 1;
+	tetri->height = tetri->y_max - tetri->y_min + 1;
 	while (i < 20)
 	{
 		if(arr[i] == '#')
@@ -221,7 +223,6 @@ int check_blocks(char *blocks, int bytes)
 	}
 	return (1);
 }
-/*
 int solve_it(unsigned int *bb, t_tetri **tm, int size)
 {
 	int i;
@@ -233,12 +234,15 @@ int solve_it(unsigned int *bb, t_tetri **tm, int size)
 	{
 		//width is not correctly calculated because x_min could be zero
 		//bitfield of tetriminos should be local variable
-		if ((*tm)->x + ((*tm)->x_max - (*tm)->x_min) + 1 < size)
+		if ((*tm)->x + (*tm)->width < size)
 		{
 			++(*tm)->x;
 			(*tm)->bitfield >> (unsigned int)1;
 		}
-*/
+		//height is calculated incorrectly
+		else if ((*tm)->y + (*tm)->height < size)
+		{
+			
 int main(int argc, char **argv)
 {
 	char			buff[26 * 21 + 1] = {'\0'};

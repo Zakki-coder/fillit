@@ -1,0 +1,275 @@
+#include <stdio.h>//DELTDELT
+#include <unistd.h>
+#include "fillit.h"
+
+unsigned int flip_bit(unsigned int bf, unsigned int n)
+{
+	return(bf |= ((unsigned int)1 << n));
+}
+
+unsigned int is_on(unsigned int bf, unsigned int n)
+{
+	return(bf >> n & (unsigned int)1);
+}
+
+void printer(unsigned int *board, int size)
+{
+	int i;
+	int i_bf;
+	int line;
+
+	i_bf = 1;
+	i = 0;
+	line = board[i / size];
+	while (i < 20)
+	{
+		++i;
+		if (i % (size + 1) == 0)
+		{
+			line = board[i / size];
+			i_bf = 1;
+			if (i > 1 && i % (size + 1) == 0)
+				ft_putchar('\n');
+			continue ;
+		}
+		if (is_on(line, 32 - i_bf))
+			ft_putchar('X');
+		else if (i % (size + 1) != 0)
+			ft_putchar('.');
+		if (i % (size + 1) != 0)
+			++i_bf;
+	}
+	return ;
+}
+
+unsigned int get_bit_line(unsigned int bf, int ln, int ln_len)
+{
+	bf = bf << (ln * ln_len);
+	bf = bf >> (32 - ln_len);
+	bf = bf << (32 - ln_len);
+
+	return (bf);
+}
+
+void	write_bit_board(unsigned int *board, t_tetri **tetriminos)
+{
+	int				i;
+	unsigned int	res;
+	unsigned int	bf;
+
+ 	i = 0;
+	while (*tetriminos != NULL)
+	{
+		bf = *((*tetriminos)->bitfield);
+		while (i <= 16)
+		{
+			if (i % 4 == 0)
+			{
+				res = get_bit_line(bf, i / 4, 4);
+				if (res == 0)
+					break ;
+				board[i / 4] = res;
+			}
+			++i;
+		}
+		i = 0;
+		printer(board, 4);
+		while(i < 16)
+			board[i++] = 0;
+		i = 0;
+		printf("\n");
+		++tetriminos;
+	}
+	return ;
+}
+
+t_tetri	*limits(char *arr, t_tetri *tetri)
+{
+	int i;
+
+	i = 0;
+	tetri->x_min = 3;
+	tetri->x_max = 0;
+	tetri->y_min = 3;
+	tetri->y_max = 0;
+	while (i < 20)
+	{
+		if (arr[i] == '#')
+		{
+			if (i % 5 < tetri->x_min)
+				tetri->x_min = i % 5;
+			if (i % 5 > tetri->x_max)
+				tetri->x_max = i % 5;
+			if (i / 5 < tetri->y_min)
+				tetri->y_min = i / 5;
+			if (i / 5 > tetri->y_max)
+				tetri->y_max = i / 5;
+		}
+		++i;
+	}
+	return (tetri);
+}
+
+t_tetri *reader(char *arr)
+{
+	t_tetri			*tetri;
+	int				i;
+	unsigned int	bf;
+
+	tetri = (t_tetri *)ft_memalloc(sizeof(*tetri));
+	if (!tetri)
+		_exit(-1);
+	i = 0;
+	bf = 1;
+	tetri = limits(arr, tetri);
+	tetri->width = tetri->x_max - tetri->x_min + 1;
+	tetri->height = tetri->y_max - tetri->y_min + 1;
+	while (i < 20)
+	{
+		if(arr[i] == '#')
+			bf = flip_bit(bf, 31 - (((i / 5 - tetri->y_min) * 4) + ((i % 5) - tetri->x_min)));
+		++i;
+	}
+	tetri->bitfield = ft_memalloc(sizeof(unsigned int) * 4);
+	if (tetri->bitfield == NULL)
+		_exit(-1);
+	*(tetri->bitfield) = bf;
+	return (tetri);
+}
+
+void	char_to_bit(char *buff, int bytes, t_tetri **tetriminos)
+{
+	char block[21] = {'\0'};
+	int i;
+
+	i = 0;
+	bytes = bytes - bytes / 21 + 1;
+	while (bytes--)
+	{
+		block[i] = buff[i];
+		++i;
+		if (i == 20)
+		{
+			*tetriminos++ = reader(block);
+			i = 0;
+			buff += 21;
+		}
+	}
+	return ;
+}
+
+int validate_char(char c, int bytes)
+{
+	return(c == '.' || c == '#' || c == '\n' || (bytes == 0 && c == '\0'));
+}
+
+int is_hash(char c)
+{
+	return (c == '#');
+}
+
+int touch_count(char *block)
+{
+	int i;
+	int count;
+
+	count = 0;
+	i = 0;
+	while (i < 20)
+	{
+		if (block[i] == '#')
+		{
+			if (i / 5 > 0 && is_hash(block[i - 5]))
+				++count;
+			if (i / 5 < 3 && is_hash(block[i + 5]))
+				++count;
+			if (i % 5 > 0 && is_hash(block[i - 1]))
+				++count;
+			if (i % 5 < 3 && is_hash(block[i + 1]))
+				++count;
+		}
+		++i;
+	}
+	return (count == 6 || count == 8);
+}
+//Correct block/line always ends with \n fix it.				
+int check_blocks(char *blocks, int bytes)
+{
+	int i;
+	char block[21];
+
+	i = 0;
+	if (bytes > 26 * 21 - 1)
+		return (-1);
+	while (bytes > 0)
+	{
+		while(i < 20)
+		{
+			if (!validate_char(blocks[i], bytes))
+			{
+				return (-2);
+			}
+			if (bytes > 0 && (((i + 1) % 5 == 0 && blocks[i] != '\n')
+			|| (((i + 1) % 5 != 0) && blocks[i] == '\n')))
+			{	
+				return (-3);
+			}
+			block[i] = blocks[i];
+			++i;
+			--bytes;
+		}
+		if (!touch_count(block))
+			return (-4);
+		i = 0;
+		blocks += 21;
+		--bytes;
+	}
+	return (1);
+}
+/*
+int solve_it(unsigned int *bb, t_tetri **tm, int size)
+{
+	int i;
+
+	i = 0;
+	(*tm)->x = 0;
+	(*tm)->y = 0;
+	while (i < size && (get_bit_line(bb[i], i / size, size) & *(get_bit_line((*tm)->bitfield, i / 4, 4))))
+	{
+		//bitfield of tetriminos should be local variable
+		if ((*tm)->x + (*tm)->width < size)
+		{
+			++(*tm)->x;
+			*(*tm)->bitfield >> (unsigned int)1;
+		}
+		else if ((*tm)->y + (*tm)->height < size)
+		{
+*/			
+int main(int argc, char **argv)
+{
+	char			buff[26 * 21 + 1] = {'\0'};
+	unsigned int	bit_board[16] = {0};
+	t_tetri			*tetriminos[26 + 1] = {NULL};
+	int bytes;
+	int fd;
+	
+	if(argc != 2)
+	{
+		ft_putstr("Usage: ./fillit [argument]");	
+		return (0);
+	}
+	else
+	{
+		fd = open(argv[1], O_RDONLY);
+		bytes = read(fd, buff, 26 * 21);
+		int res = 0;
+		if ((res = check_blocks(buff, bytes)) != 1)
+		{
+			printf("Res: %d\n", res);
+			return (-1);
+			}
+	}
+	char_to_bit(buff, bytes, tetriminos);
+	write_bit_board(bit_board, tetriminos);
+	return(0);
+}

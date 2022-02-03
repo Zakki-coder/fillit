@@ -2,6 +2,28 @@
 #include <unistd.h>
 #include "fillit.h"
 
+void print_bit(unsigned int *bit_board, int size)
+{
+	int i = 0;
+	int x = 0;
+	while (i < size)
+	{
+		while (x < size)
+		{
+			if (bit_board[i] & (((unsigned int)1 << (31 - x))))
+				ft_putchar('1');
+			else
+				ft_putchar('0');
+			++x;
+		}
+		x = 0;
+		ft_putchar('\n');
+		++i;
+	}
+	ft_putchar('\n');
+	return ;
+}
+
 unsigned int flip_bit(unsigned int bf, unsigned int n)
 {
 	return(bf |= ((unsigned int)1 << n));
@@ -51,7 +73,7 @@ unsigned int get_bit_line(unsigned int bf, int ln, int ln_len)
 	return (bf);
 }
 /*
-void	write_bit_board(unsigned int *board, t_tetri **tetriminos)
+void	write_bit_board(unsigned int *board, t_tetri **tetriminos, int size)
 {
 	int				i;
 	unsigned int	res;
@@ -123,13 +145,14 @@ t_tetri *reader(char *arr)
 	tetri->width = tetri->x_max - tetri->x_min + 1;
 	tetri->height = tetri->y_max - tetri->y_min + 1;
 	tetri->bitfield = ft_memalloc(sizeof(unsigned int) * 4);
+	tetri->x = -1;
+	tetri->y = -1;
 	if (tetri->bitfield == NULL)
 		_exit(-1);
-	*tetri->bitfield = 1;
 	while (i < 20)
 	{
 		if(arr[i] == '#')
-			tetri->bitfield[(i / 5) - tetri->y_min] = flip_bit(tetri->bitfield[i / 5 - tetri->y_min], 31 - ((i % 5) - tetri->x_min));
+			tetri->bitfield[(i / 5) - tetri->y_min] |= flip_bit(0, 31 - ((i % 5) - tetri->x_min));
 		++i;
 	}
 	return (tetri);
@@ -226,33 +249,94 @@ int check_blocks(char *blocks, int bytes)
 	}
 	return (1);
 }
-/*
+
+//function to test rest of lines
+int fit_line(unsigned int bb, unsigned int tm, int offset)
+{
+	return (bb & tm >> offset);
+}
+/* Call solve_it recursively for all tetriminos, if NULL is reached, then all tetriminos fit
+ * TODO: If all possible places have been tried, return 0 for failure
+ */
 int solve_it(unsigned int *bb, t_tetri **tm, int size)
 {
 	int i;
+	unsigned int first_ln;
 
+	if ((*tm) == NULL)
+		return (1);
+	first_ln = *(*tm)->bitfield >> (++(*tm)->x);
+	printf("first_ln: %u\t", first_ln);
 	i = 0;
-	(*tm)->x = 0;
-	(*tm)->y = 0;
-	while (i < size && (get_bit_line(bb[i], i / size, size) & *(get_bit_line((*tm)->bitfield, i / 4, 4))))
+	printf ("height: %d\n", (*tm)->height);
+	printf("i: %d\n", i);
+	print_bit((*tm)->bitfield, 4);
+	//bb[0] = 0b10100000000000000000000000000000;
+	//Find a place for first line of tetrimino block
+	while (i < size && (bb[i] & first_ln) > 0)
 	{
-		//bitfield of tetriminos should be local variable
+		printf("x: %d\n", (*tm)->x);
 		if ((*tm)->x + (*tm)->width < size)
 		{
 			++(*tm)->x;
-			*(*tm)->bitfield >> (unsigned int)1;
+			first_ln = first_ln >> (unsigned int)1;
 		}
-		else if ((*tm)->y + (*tm)->height < size)
+		else
 		{
-*/			
+			first_ln = *tm[0]->bitfield;
+			(*tm)->x = 0;
+			++i;
+		}
+	}
+//Check if rest of tetrimino lines fit
+//	printf("x: %d\n", (*tm)->x);
+	int tm_i;
+
+	tm_i = 1;
+	++i;
+	while (i < size && (*tm)->bitfield[tm_i] > 0 && !fit_line(bb[i++], (*tm)->bitfield[tm_i++], (*tm)->x))
+		;
+	printf("tm_i: %d\n", tm_i);
+	if (tm_i == (*tm)->height)
+	{	
+
+		while(tm_i >= 0)
+		{
+			bb[--i] |= ((*tm)->bitfield[--tm_i] >> (*tm)->x);
+		}
+		//If this block fits, call function for next block
+		if (solve_it(bb, tm + 1, size))
+		{
+			printf("why\n");
+			return (1);
+		}
+		else
+		{
+			printf("tavarits\n");
+			if (solve_it(bb, tm, size)
+				return (1);
+			return (0);
+		}
+	}
+	else
+	{
+		printf("Harassoo\n");
+		//If this block doesn't fit, call function for this block again.
+		if(solve_it(bb, tm, size))
+			return 1;
+		return (0);
+	}
+}
+
 int main(int argc, char **argv)
 {
 	char			buff[26 * 21 + 1] = {'\0'};
-//	unsigned int	bit_board[16] = {0};
+	unsigned int	bit_board[16] = {0};
 	t_tetri			*tetriminos[26 + 1] = {NULL};
 	int bytes;
 	int fd;
 	int i;
+	int size;
 	
 	i = 0;
 	if(argc != 2)
@@ -272,12 +356,30 @@ int main(int argc, char **argv)
 			}
 	}
 	char_to_bit(buff, bytes, tetriminos);
-	while (tetriminos[i] != NULL)
+	size = 4;
+	while(solve_it(bit_board, tetriminos, size) != 1)
+	{
+		printf("trastui\n");
+		++size;
+		while(i < 16)
+			bit_board[i++] = 0;
+		i = 0;
+		while (tetriminos[i] != NULL)
+		{
+			tetriminos[i]->x = -1;
+			tetriminos[i]->y = -1;
+			++i;
+		}
+	}
+//	printf("f. line: %u\n", bit_board[1]);
+	print_bit(bit_board, size);
+/*	while (tetriminos[i] != NULL)
 	{
 		printer(tetriminos[i]->bitfield, 4);
 		++i;
 		ft_putchar('\n');
 	}
+*/
 //	write_bit_board(bit_board, tetriminos);
 	return(0);
 }

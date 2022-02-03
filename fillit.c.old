@@ -60,7 +60,7 @@ void	write_bit_board(unsigned int *board, t_tetri **tetriminos)
  	i = 0;
 	while (*tetriminos != NULL)
 	{
-		bf = *((*tetriminos)->bitfield);
+		bf = (*tetriminos)->bitfield;
 		while (i <= 16)
 		{
 			if (i % 4 == 0)
@@ -85,7 +85,7 @@ void	write_bit_board(unsigned int *board, t_tetri **tetriminos)
 
 t_tetri	*limits(char *arr, t_tetri *tetri)
 {
-	int i;
+	unsigned int i;
 
 	i = 0;
 	tetri->x_min = 3;
@@ -130,10 +130,7 @@ t_tetri *reader(char *arr)
 			bf = flip_bit(bf, 31 - (((i / 5 - tetri->y_min) * 4) + ((i % 5) - tetri->x_min)));
 		++i;
 	}
-	tetri->bitfield = ft_memalloc(sizeof(unsigned int) * 4);
-	if (tetri->bitfield == NULL)
-		_exit(-1);
-	*(tetri->bitfield) = bf;
+	tetri->bitfield = bf;
 	return (tetri);
 }
 
@@ -192,7 +189,7 @@ int touch_count(char *block)
 	}
 	return (count == 6 || count == 8);
 }
-//Correct block/line always ends with \n fix it.				
+				
 int check_blocks(char *blocks, int bytes)
 {
 	int i;
@@ -226,7 +223,6 @@ int check_blocks(char *blocks, int bytes)
 	}
 	return (1);
 }
-/*
 int solve_it(unsigned int *bb, t_tetri **tm, int size)
 {
 	int i;
@@ -234,17 +230,19 @@ int solve_it(unsigned int *bb, t_tetri **tm, int size)
 	i = 0;
 	(*tm)->x = 0;
 	(*tm)->y = 0;
-	while (i < size && (get_bit_line(bb[i], i / size, size) & *(get_bit_line((*tm)->bitfield, i / 4, 4))))
+	while (i < size && (get_bit_line(bb[i], i / size, size) & (get_bit_line((*tm)->bitfield, i / 4, 4))))
 	{
+		//width is not correctly calculated because x_min could be zero
 		//bitfield of tetriminos should be local variable
 		if ((*tm)->x + (*tm)->width < size)
 		{
 			++(*tm)->x;
-			*(*tm)->bitfield >> (unsigned int)1;
+			(*tm)->bitfield >> (unsigned int)1;
 		}
+		//height is calculated incorrectly
 		else if ((*tm)->y + (*tm)->height < size)
 		{
-*/			
+			
 int main(int argc, char **argv)
 {
 	char			buff[26 * 21 + 1] = {'\0'};

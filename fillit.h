@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 10:28:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/01/31 13:10:58 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/02/02 18:20:27 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,15 @@
 
 typedef struct s_tetrimino
 {
-	unsigned int	bitfield;
-	unsigned int	x;
-	unsigned int	y;
-	unsigned int	x_min;
-	unsigned int	x_max;
-	unsigned int	y_min;
-	unsigned int	y_max;
+	unsigned int	*bitfield;
+	int				x;
+	int				y;
+	int				x_min;
+	int				x_max;
+	int				y_min;
+	int				y_max;
+	int				height;
+	int				width;
 }					t_tetri;
 
 #endif

@@ -226,7 +226,8 @@ int check_blocks(char *blocks, int bytes)
 	char block[21];
 
 	i = 0;
-	if (bytes > 26 * 21 - 1)
+	//If number of blocks is larger than 26 or if size of last block differs from 20
+	if (bytes > 26 * 21 - 1 || bytes % 21 != 20)
 		return (-1);
 	while (bytes > 0)
 	{
@@ -236,7 +237,7 @@ int check_blocks(char *blocks, int bytes)
 			{
 				return (-2);
 			}
-			if (bytes > 0 && (((i + 1) % 5 == 0 && blocks[i] != '\n')
+			if ((((i + 1) % 5 == 0 && blocks[i] != '\n')
 			|| (((i + 1) % 5 != 0) && blocks[i] == '\n')))
 			{	
 				return (-3);

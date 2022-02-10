@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 10:28:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/02/02 18:20:27 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/02/10 12:43:25 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_tetrimino
 	int				y_max;
 	int				height;
 	int				width;
+	char			symbol;
 }					t_tetri;
 
 #endif

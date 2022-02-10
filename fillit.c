@@ -161,9 +161,11 @@ t_tetri *reader(char *arr)
 void	char_to_bit(char *buff, int bytes, t_tetri **tetriminos)
 {
 	char block[21] = {'\0'};
+	char sym;
 	int i;
 	t_tetri	**tt;
 
+	sym = 'A';
 	tt = tetriminos;
 	i = 0;
 	bytes = bytes - bytes / 21 + 1;
@@ -173,7 +175,9 @@ void	char_to_bit(char *buff, int bytes, t_tetri **tetriminos)
 		++i;
 		if (i == 20)
 		{
-			*tt++ = reader(block);
+			*tt = reader(block);
+			(*tt)->symbol = sym++;
+			tt++;
 			i = 0;
 			buff += 21;
 		}
@@ -293,13 +297,13 @@ int solve_it(unsigned int *bb, t_tetri **tm, int size)
 	int tm_i;
 
 	tm_i = 1;
+	(*tm)->y = i;
 	++i;
 	while (i < size && (*tm)->bitfield[tm_i] > 0 && !fit_line(bb[i++], (*tm)->bitfield[tm_i++], (*tm)->x))
 		;
 	printf("tm_i: %d\n", tm_i);
 	if (tm_i == (*tm)->height)
 	{	
-
 		while(tm_i >= 0)
 		{
 			bb[--i] |= ((*tm)->bitfield[--tm_i] >> (*tm)->x);
@@ -307,25 +311,23 @@ int solve_it(unsigned int *bb, t_tetri **tm, int size)
 		//If this block fits, call function for next block
 		if (solve_it(bb, tm + 1, size))
 		{
-			printf("why\n");
 			return (1);
 		}
-		else
+/*		else
 		{
-			printf("tavarits\n");
 			if (solve_it(bb, tm, size)
 				return (1);
 			return (0);
 		}
-	}
-	else
+*/	}
+	//Check if block could be moved and if so then call function for same block
+	if ((((*tm)->y - 1) * size + ((*tm)->x + (*tm)->width) < size * size))
 	{
-		printf("Harassoo\n");
 		//If this block doesn't fit, call function for this block again.
 		if(solve_it(bb, tm, size))
 			return 1;
-		return (0);
 	}
+	return (0);
 }
 
 int main(int argc, char **argv)
@@ -371,15 +373,6 @@ int main(int argc, char **argv)
 			++i;
 		}
 	}
-//	printf("f. line: %u\n", bit_board[1]);
 	print_bit(bit_board, size);
-/*	while (tetriminos[i] != NULL)
-	{
-		printer(tetriminos[i]->bitfield, 4);
-		++i;
-		ft_putchar('\n');
-	}
-*/
-//	write_bit_board(bit_board, tetriminos);
 	return(0);
 }

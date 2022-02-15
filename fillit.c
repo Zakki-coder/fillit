@@ -33,7 +33,7 @@ unsigned int is_on(unsigned int bf, unsigned int n)
 {
 	return(bf >> n & (unsigned int)1);
 }
-
+/*
 void printer(unsigned int *board, int size)
 {
 	int i;
@@ -63,7 +63,7 @@ void printer(unsigned int *board, int size)
 	}
 	return ;
 }
-
+*/
 unsigned int get_bit_line(unsigned int bf, int ln, int ln_len)
 {
 	bf = bf << (ln * ln_len);
@@ -260,14 +260,36 @@ int fit_line(unsigned int bb, unsigned int tm, int offset)
 {
 	return (bb & tm >> offset);
 }
+
+void offset_calc(t_tetri *tm)
+{
+	int offset;
+	int i;
+	int x;
+
+	x = 0;
+	offset = 0;
+	i = 0;
+	while(i < tm->height)
+	{
+		while (!is_on(tm->bitfield[i], 31 - x))
+			++x;
+		if (x > offset)
+			offset = x;
+		++i;
+	}
+	tm->x = offset;
+}
 /* Call solve_it recursively for all tetriminos, if NULL is reached, then all tetriminos fit
  * TODO: If all possible places have been tried, return 0 for failure
  */
-int solve_it(unsigned int *bb, t_tetri **tm, int size)
+int solve_it(unsigned int *bb, t_tetri **tetriminos, int size)
 {
 	int i;
 	unsigned int first_ln;
+	t_tetri **tm;
 
+	tm = tetriminos;
 	if ((*tm) == NULL)
 		return (1);
 	first_ln = *(*tm)->bitfield >> (++(*tm)->x);
@@ -331,6 +353,72 @@ int solve_it(unsigned int *bb, t_tetri **tm, int size)
 	return (0);
 }
 
+char *creat_array(int size)
+{
+	char *board;
+	int i;
+
+	i = 0;
+	board = (char *)ft_memalloc(sizeof(*board) * (size * size) + size);
+	if (board == NULL)
+		_exit(-1);
+	ft_memset((void *)board, '.', sizeof(char) * size * size + size);
+	while (i * (size + 1) < size * size + size)
+	{
+		board[i * (size + 1) + (size)] = '\n';
+		++i;
+	}
+	return (board);
+}
+
+void printer(int size, t_tetri **tm)
+{
+	int i;
+	int block_i;
+	int handle;
+	int start;
+	char *board;
+
+	handle = 0;
+	block_i = 0;
+	board = creat_array(size);
+	i = 0;
+	offset_calc(*tm);
+	while (*tm != NULL)
+	{
+		start = (*tm)->y * (size + 1) + (*tm)->x;
+		printf("start: %d\n", start);
+		while (i / 4 < (*tm)->height)
+		{
+			if (is_on((*tm)->bitfield[i / 4], 31 - (i % 4)))
+			{
+				handle = 1;
+				board[start + block_i + i / 4] = (*tm)->symbol;
+			}
+			if (handle == 1)
+				++block_i;
+			++i;
+		}
+		block_i = 0;
+		i = 0;
+		++tm;
+	}
+	printf("%s", board);
+	return ;
+}
+			
+t_tetri **tetri_swap(t_tetri **tm, int index)
+{
+	t_tetri	*temp;
+
+	temp = *tm;
+	*tm = *(tm + index);
+	*(tm + index) = temp;
+	return (tm);
+}
+
+//TODO is size the size with nl or without???
+//Its without nl.
 int main(int argc, char **argv)
 {
 	char			buff[26 * 21 + 1] = {'\0'};
@@ -340,7 +428,8 @@ int main(int argc, char **argv)
 	int fd;
 	int i;
 	int size;
-	
+	int count;
+
 	i = 0;
 	if(argc != 2)
 	{
@@ -360,9 +449,14 @@ int main(int argc, char **argv)
 	}
 	char_to_bit(buff, bytes, tetriminos);
 	size = 4;
+	count = 0;
 	while(solve_it(bit_board, tetriminos, size) != 1)
 	{
-		printf("trastui\n");
+		++count;
+		if (count < bytes / 21 + 1)
+			tetri_swap(tetriminos, count);		
+		else
+			return (0);
 		++size;
 		while(i < 16)
 			bit_board[i++] = 0;
@@ -374,6 +468,8 @@ int main(int argc, char **argv)
 			++i;
 		}
 	}
+	printer(size, tetriminos);
 	print_bit(bit_board, size);
+	
 	return(0);
 }

@@ -338,8 +338,8 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 
 	tm_i = 1;
 	i = (*tm)->y + 1;
-	while (i < size && (*tm)->bitfield[tm_i] > 0 && !fit_line(bb[i++], (*tm)->bitfield[tm_i++], (*tm)->x))
-		;
+	while (i < size && (*tm)->bitfield[tm_i] > 0 && !fit_line(bb[i++], (*tm)->bitfield[tm_i], (*tm)->x))
+		tm_i++;
 //	printf("tm_i: %d\n", tm_i);
 	printf("y: %d\n", (*tm)->y);
 	if (tm_i == (*tm)->height)

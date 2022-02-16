@@ -231,7 +231,7 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 	tm = tetriminos;
 	if ((*tm) == NULL)
 	{
-		print_bit(bit_board, size);
+//		print_bit(bit_board, size);
 		return (1);
 	}
 	if ((*tm)->x + (*tm)->width < size)
@@ -326,7 +326,7 @@ void printer(int size, t_tetri **tm)
 		i = 0;
 		++tm;
 	}
-	printf("%s", board);
+	ft_putstr(board);
 	return ;
 }
 			
@@ -374,7 +374,7 @@ int main(int argc, char **argv)
 	//TODO Make copy of original tetriminos and load it when needed
 	while(solve_it(bit_board, tetriminos, size) != 1)
 	{
-		printf("Count: %d\n", count);
+//		printf("Count: %d\n", count);
 		++count;
 		if (count < bytes / 21)
 			tetri_swap(tetriminos, count);		

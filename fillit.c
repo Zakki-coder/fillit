@@ -2,8 +2,6 @@
 #include <unistd.h>
 #include "fillit.h"
 
-void printer(int size, t_tetri **tm);
-
 void print_bit(unsigned int *bit_board, int size)
 {
 	int i = 0;
@@ -35,7 +33,7 @@ unsigned int is_on(unsigned int bf, unsigned int n)
 {
 	return(bf >> n & (unsigned int)1);
 }
-
+/*
 unsigned int get_bit_line(unsigned int bf, int ln, int ln_len)
 {
 	bf = bf << (ln * ln_len);
@@ -44,7 +42,7 @@ unsigned int get_bit_line(unsigned int bf, int ln, int ln_len)
 
 	return (bf);
 }
-
+*/
 t_tetri	*limits(char *arr, t_tetri *tetri)
 {
 	int i;
@@ -125,6 +123,7 @@ void	char_to_bit(char *buff, int bytes, t_tetri **tetriminos)
 	return ;
 }
 
+//Last condition? Maybe not needed anymore.
 int validate_char(char c, int bytes)
 {
 	return(c == '.' || c == '#' || c == '\n' || (bytes == 0 && c == '\0'));
@@ -200,7 +199,7 @@ int fit_line(unsigned int bb, unsigned int tm, int offset)
 {
 	return (bb & tm >> offset);
 }
-
+/*
 int  offset_calc(t_tetri *tm)
 {
 	int offset;
@@ -217,6 +216,7 @@ int  offset_calc(t_tetri *tm)
 	++i;
 	return (offset);
 }
+*/
 /* Call solve_it recursively for all tetriminos, if NULL is reached, then all tetriminos fit
  * TODO: If all possible places have been tried, return 0 for failure
  */

@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include "fillit.h"
 
+void printer(int size, t_tetri **tm);
+
 void print_bit(unsigned int *bit_board, int size)
 {
 	int i = 0;
@@ -33,37 +35,7 @@ unsigned int is_on(unsigned int bf, unsigned int n)
 {
 	return(bf >> n & (unsigned int)1);
 }
-/*
-void printer(unsigned int *board, int size)
-{
-	int i;
-	int i_bf;
-	int line;
 
-	i_bf = 1;
-	i = 0;
-	line = board[i / size];
-	while (i < 20)
-	{
-		++i;
-		if (i % (size + 1) == 0)
-		{
-			line = board[i / size];
-			i_bf = 1;
-			if (i > 1 && i % (size + 1) == 0)
-				ft_putchar('\n');
-			continue ;
-		}
-		if (is_on(line, 32 - i_bf))
-			ft_putchar('X');
-		else if (i % (size + 1) != 0)
-			ft_putchar('.');
-		if (i % (size + 1) != 0)
-			++i_bf;
-	}
-	return ;
-}
-*/
 unsigned int get_bit_line(unsigned int bf, int ln, int ln_len)
 {
 	bf = bf << (ln * ln_len);
@@ -72,39 +44,7 @@ unsigned int get_bit_line(unsigned int bf, int ln, int ln_len)
 
 	return (bf);
 }
-/*
-void	write_bit_board(unsigned int *board, t_tetri **tetriminos, int size)
-{
-	int				i;
-	unsigned int	res;
-	unsigned int	bf;
 
- 	i = 0;
-	while (*tetriminos != NULL)
-	{
-		bf = *((*tetriminos)->bitfield);
-		while (i <= 16)
-		{
-			if (i % 4 == 0)
-			{
-				res = get_bit_line(bf, i / 4, 4);
-				if (res == 0)
-					break ;
-				board[i / 4] = res;
-			}
-			++i;
-		}
-		i = 0;
-		printer(board, 4);
-		while(i < 16)
-			board[i++] = 0;
-		i = 0;
-		printf("\n");
-		++tetriminos;
-	}
-	return ;
-}
-*/
 t_tetri	*limits(char *arr, t_tetri *tetri)
 {
 	int i;
@@ -261,7 +201,7 @@ int fit_line(unsigned int bb, unsigned int tm, int offset)
 	return (bb & tm >> offset);
 }
 
-void offset_calc(t_tetri *tm)
+int  offset_calc(t_tetri *tm)
 {
 	int offset;
 	int i;
@@ -270,15 +210,12 @@ void offset_calc(t_tetri *tm)
 	x = 0;
 	offset = 0;
 	i = 0;
-	while(i < tm->height)
-	{
-		while (!is_on(tm->bitfield[i], 31 - x))
-			++x;
-		if (x > offset)
-			offset = x;
-		++i;
-	}
-	tm->x = offset;
+	while (!is_on(tm->bitfield[i], 31 - x))
+		++x;
+	if (x > offset)
+		offset = x;
+	++i;
+	return (offset);
 }
 /* Call solve_it recursively for all tetriminos, if NULL is reached, then all tetriminos fit
  * TODO: If all possible places have been tried, return 0 for failure
@@ -294,9 +231,9 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 	tm = tetriminos;
 	if ((*tm) == NULL)
 	{
-		print_bit(bb, size);
+		print_bit(bit_board, size);
 		return (1);
-		}
+	}
 	if ((*tm)->x + (*tm)->width < size)
 		first_ln = *(*tm)->bitfield >> (++(*tm)->x);
 	else if ((*tm)->y + (*tm)->height < size)
@@ -306,16 +243,10 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 	}
 	else
 		return (0);
-//	printf("first_ln: %u\t", first_ln);
 	i = 0;
-//	printf ("height: %d\n", (*tm)->height);
-//	printf("i: %d\n", i);
-//	print_bit((*tm)->bitfield, 4);
-	//bb[0] = 0b10100000000000000000000000000000;
 	//Find a place for first line of tetrimino block
 	while ((*tm)->y + (*tm)->height <= size && (bb[(*tm)->y] & first_ln) > 0)
 	{
-		printf("x: %d\n", (*tm)->x);
 		if ((*tm)->x + (*tm)->width < size)
 		{
 			++(*tm)->x;
@@ -328,56 +259,32 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 			++(*tm)->y;
 		}
 	}
-	printf("y: %d, height: %d\n", (*tm)->y, (*tm)->height);
-	printf("WIDTH: %dX OFFSET: %d\n", (*tm)->width, (*tm)->x);
 	if ((*tm)->y + (*tm)->height > size)
 		return (0);
 //Check if rest of tetrimino lines fit
-//	printf("x: %d\n", (*tm)->x);
 	int tm_i;
 
 	tm_i = 1;
 	i = (*tm)->y + 1;
 	while (i < size && (*tm)->bitfield[tm_i] > 0 && !fit_line(bb[i++], (*tm)->bitfield[tm_i], (*tm)->x))
 		tm_i++;
-//	printf("tm_i: %d\n", tm_i);
-	printf("y: %d\n", (*tm)->y);
 	if (tm_i == (*tm)->height)
 	{	
 		while(tm_i >= 0)
-		{
 			bb[--i] |= ((*tm)->bitfield[--tm_i] >> (*tm)->x);
-		}
 		//If this block fits, call function for next block
 		if (solve_it(bb, tm + 1, size))
-		{
-			print_bit(bb, size);
-			printf("Block fitted\n");
 			return (1);
-		}
-		printf("didn't fit\n");
-/*		else
-		{
-			if (solve_it(bb, tm, size)
-				return (1);
-			return (0);
-		}
-*/	}
+	}
 	//Check if block could be moved and if so then call function for same block
 	//If bb has already been written it should be undone
 	//Make local copy of bb to fix?
 	if ((*tm)->x + (*tm)->width < size || (*tm)->y + (*tm)->height < size)
 	{
-		printf("Can block be moved?\n");
 		//If this block doesn't fit, call function for this block again.
 		if(solve_it(bit_board, tm, size))
-		{
-			printf("Original was moved\n");
 			return 1;
-			}
-		printf("Block cant be moved.\n");
 	}
-	printf("This never happens\n");
 	return (0);
 }
 
@@ -402,32 +309,20 @@ char *creat_array(int size)
 void printer(int size, t_tetri **tm)
 {
 	int i;
-	int block_i;
-	int handle;
 	int start;
 	char *board;
 
-	handle = 0;
-	block_i = 0;
 	board = creat_array(size);
 	i = 0;
-	offset_calc(*tm);
 	while (*tm != NULL)
 	{
 		start = (*tm)->y * (size + 1) + (*tm)->x;
-		printf("start: %d\n", start);
 		while (i / 4 < (*tm)->height)
 		{
-			if (is_on((*tm)->bitfield[i / 4], 31 - (i % (size))))
-			{
-				handle = 1;
-				board[start + block_i + i / 4] = (*tm)->symbol;
-			}
-			if (handle == 1)
-				++block_i;
+			if (is_on((*tm)->bitfield[i / 4], 31 - (i % 4)))
+				board[start + (i/ 4 * (size + 1)) + (i % 4)] = (*tm)->symbol;
 			++i;
 		}
-		block_i = 0;
 		i = 0;
 		++tm;
 	}
@@ -445,8 +340,6 @@ t_tetri **tetri_swap(t_tetri **tm, int index)
 	return (tm);
 }
 
-//TODO is size the size with nl or without???
-//Its without nl.
 int main(int argc, char **argv)
 {
 	char			buff[26 * 21 + 1] = {'\0'};
@@ -478,8 +371,7 @@ int main(int argc, char **argv)
 	char_to_bit(buff, bytes, tetriminos);
 	size = 4;
 	count = 0;
-	//Make copy of original tetriminos and load it when needed
-	//
+	//TODO Make copy of original tetriminos and load it when needed
 	while(solve_it(bit_board, tetriminos, size) != 1)
 	{
 		printf("Count: %d\n", count);
@@ -505,7 +397,6 @@ int main(int argc, char **argv)
 	}
 	printf("before print size: %d\n", size);
 	printer(size, tetriminos);
-//	print_bit(bit_board, size);
 	
 	return(0);
 }

@@ -239,7 +239,7 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 	else if ((*tm)->y + (*tm)->height < size)
 	{
 		++(*tm)->y;
-		(*tm)->x = 0;
+		(*tm)->x = -1;//CHANGED THIS FROM 0
 	}
 	else
 		return (0);
@@ -254,7 +254,7 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 		}
 		else
 		{
-			first_ln = *tm[0]->bitfield;
+			first_ln = *tm[0]->bitfield; // CHECK THIS
 			(*tm)->x = 0;
 			++(*tm)->y;
 		}
@@ -265,6 +265,7 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 	int tm_i;
 
 	tm_i = 1;
+	//TODO i can get too big when block is on last line of board??
 	i = (*tm)->y + 1;
 	while (i < size && (*tm)->bitfield[tm_i] > 0 && !fit_line(bb[i++], (*tm)->bitfield[tm_i], (*tm)->x))
 		tm_i++;
@@ -279,7 +280,7 @@ int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
 	//Check if block could be moved and if so then call function for same block
 	//If bb has already been written it should be undone
 	//Make local copy of bb to fix?
-	if ((*tm)->x + (*tm)->width < size || (*tm)->y + (*tm)->height < size)
+	if ((*tm)->x + (*tm)->width < size || (*tm)->y + (*tm)->height <= size)
 	{
 		//If this block doesn't fit, call function for this block again.
 		if(solve_it(bit_board, tm, size))
@@ -294,10 +295,11 @@ char *creat_array(int size)
 	int i;
 
 	i = 0;
-	board = (char *)ft_memalloc(sizeof(*board) * (size * size) + size);
+	board = (char *)ft_memalloc(sizeof(*board) * (size * size) + size + 1);
 	if (board == NULL)
 		_exit(-1);
-	ft_memset((void *)board, '.', sizeof(char) * size * size + size);
+	ft_bzero(board, sizeof(*board) * size * size + size);
+	ft_memset(board, '.', sizeof(*board) * size * size + size);
 	while (i * (size + 1) < size * size + size)
 	{
 		board[i * (size + 1) + (size)] = '\n';
@@ -327,24 +329,72 @@ void printer(int size, t_tetri **tm)
 		++tm;
 	}
 	ft_putstr(board);
+	free(board);
 	return ;
 }
 			
 t_tetri **tetri_swap(t_tetri **tm, int index)
 {
-	t_tetri	*temp;
+	t_tetri	temp;
 
-	temp = *tm;
-	*tm = *(tm + index);
-	*(tm + index) = temp;
+	temp = **tm;
+	**tm = **(tm + index);
+	**(tm + index) = temp;
 	return (tm);
 }
 
+void free_tetri(t_tetri **tm)
+{
+	while ((*tm) != NULL)
+	{
+		free((*tm)->bitfield);
+		free((*tm));
+		++tm;
+	}
+	return ;
+}
+
+void	cpy_tetriminios(t_tetri *tm_cpy, t_tetri **tm, int direction)
+{
+	int i;
+
+	i = 0;
+	if (direction == -1)
+	{
+		while(tm[i] != NULL)
+		{
+			tm_cpy[i] = *(tm[i]);
+			++i;
+		}
+	}
+	if (direction == 1)
+	{
+		while(tm[i] != NULL)
+		{
+			*(tm[i]) = tm_cpy[i];
+			++i;
+		}
+	}
+}
+
+void debug(t_tetri **tm)
+{
+	int i;
+
+	i = 0;
+	while (tm[i] != NULL)
+	{
+		printf("%c.\t%d\t%d\n", tm[i]->symbol, tm[i]->x, tm[i]->y);	
+		++i;
+	}
+	return ;
+	}
 int main(int argc, char **argv)
 {
 	char			buff[26 * 21 + 1] = {'\0'};
 	unsigned int	bit_board[16] = {0};
 	t_tetri			*tetriminos[26 + 1] = {NULL};
+	t_tetri			tm_cpy[26 + 1] = {NULL};
 	int bytes;
 	int fd;
 	int i;
@@ -372,19 +422,22 @@ int main(int argc, char **argv)
 	size = 4;
 	count = 0;
 	//TODO Make copy of original tetriminos and load it when needed
+	cpy_tetriminios(tm_cpy, tetriminos, -1);
 	while(solve_it(bit_board, tetriminos, size) != 1)
 	{
-//		printf("Count: %d\n", count);
+		printf("Count: %d\n", count);
 		++count;
-		if (count < bytes / 21)
+		if (count <= bytes / 21)
 			tetri_swap(tetriminos, count);		
 		else
 		{
+//			TODO reset tetrimino order
+			cpy_tetriminios(tm_cpy, tetriminos, 1);
 			++size;
-			tetri_swap(tetriminos, count);
-			tetri_swap(tetriminos, 1);
 			count = 0;
 		}
+		print_bit(bit_board, size);
+		debug(tetriminos);
 		while(i < 16)
 			bit_board[i++] = 0;
 		i = 0;
@@ -396,7 +449,8 @@ int main(int argc, char **argv)
 		}
 	}
 	printf("before print size: %d\n", size);
+	debug(tetriminos);
 	printer(size, tetriminos);
-	
+	free_tetri(tetriminos);	
 	return(0);
 }

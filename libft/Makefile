@@ -6,7 +6,7 @@
 #    By: jniemine <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/23 16:50:01 by jniemine          #+#    #+#              #
-#    Updated: 2021/12/22 17:09:44 by jniemine         ###   ########.fr        #
+#    Updated: 2022/02/21 22:53:19 by jniemine         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,8 @@ SRC = 	ft_atoi.c       \
 		ft_lstmap.c		\
 		ft_freeda.c		\
 		ft_realloc.c	\
-		ft_lstdelany.c
+		ft_lstdelany.c	\
+		ft_recursive_factorial.c \
 
 OBJ =	ft_atoi.o       \
 		ft_bzero.o      \
@@ -136,7 +137,8 @@ OBJ =	ft_atoi.o       \
 		ft_lstmap.o		\
 		ft_freeda.o		\
 		ft_realloc.o	\
-		ft_lstdelany.o
+		ft_lstdelany.o	\
+		ft_recursive_factorial.o \
 
 all: $(NAME)
 

@@ -6,7 +6,7 @@
 /*   By: jniemine <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 09:53:35 by jniemine          #+#    #+#             */
-/*   Updated: 2021/12/22 17:08:56 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/02/21 22:55:31 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+int		ft_recursive_factorial(int nb);
 size_t	ft_strlen(const char *s);
 char	*ft_strdup(const char *s1);
 char	*ft_strcpy(char *dst, const char *src);

@@ -342,7 +342,10 @@ int main(int argc, char **argv)
 		bytes = read(fd, buff, 26 * 21);
 		int res = 0;
 		if ((res = check_blocks(buff, bytes)) != 1)
+		{
+			ft_putstr("error\n");
 			return (-1);
+		}
 	}
 	char_to_bit(buff, bytes, tetriminos);
 

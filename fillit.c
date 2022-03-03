@@ -1,6 +1,28 @@
 #include <unistd.h>
 #include "fillit.h"
 
+void print_bit(unsigned int *bit_board, int size)
+{
+	int i = 0;
+	int x = 0;
+	while (i < size)
+	{
+		while (x < size)
+		{
+			if (bit_board[i] & (((unsigned int)1 << (31 - x))))
+				ft_putchar('1');
+			else
+				ft_putchar('0');
+			++x;
+		}
+		x = 0;
+		ft_putchar('\n');
+		++i;
+	}
+	ft_putchar('\n');
+	return ;
+}
+
 unsigned int flip_bit(unsigned int bf, unsigned int n)
 {
 	return(bf |= ((unsigned int)1 << n));
@@ -91,7 +113,6 @@ void	char_to_bit(char *buff, int bytes, t_tetri **tetriminos)
 	return ;
 }
 
-//Last condition? Maybe not needed anymore.
 int validate_char(char c, int bytes)
 {
 	return(c == '.' || c == '#' || c == '\n' || (bytes == 0 && c == '\0'));
@@ -126,7 +147,7 @@ int touch_count(char *block)
 	}
 	return (count == 6 || count == 8);
 }
-//Correct block/line always ends with \n fix it.				
+
 int check_blocks(char *blocks, int bytes)
 {
 	int i;
@@ -162,22 +183,6 @@ int check_blocks(char *blocks, int bytes)
 	return (1);
 }
 
-int can_it_move(unsigned int *bf, int size, int x)
-{
-	unsigned int	one;
-	int 			i;
-
-	one = 1;
-	i = 0;
-	while (bf[i] != 0 && i < 4)
-	{
-		if (((bf[i] >> (x + 1)) & (one << (31 - size))) > 0)
-			return (0);	
-		++i;
-	}
-	return (1);
-}
-
 int fit_block(unsigned int *bb, t_tetri *tm, int y, int offset)
 {
 	int i;
@@ -192,77 +197,51 @@ int fit_block(unsigned int *bb, t_tetri *tm, int y, int offset)
 	}
 	return (1);
 }
-	
-int find_place(unsigned int *bb, t_tetri *tm, int size)
-{
-	int x;
-	int y;
 
-	x = tm->x;
-	y = tm->y;
-	if (tm->width > size)
-		return (0);
-	while (y + tm->height <= size && !fit_block(bb, tm, y, x))
+	void toggler(unsigned int *bb, t_tetri *tm)
 	{
-			if (can_it_move(tm->bitfield, size, x))	
-				++x;
-			else
-			{
-				++y;
-				x = 0;
-			}
-	}
-	if (y + tm->height > size)
-		return (0);
-	tm->x = x;
-	tm->y = y;
-	return (1);
-}
+		int i;
 
-int solve_it(unsigned int *bit_board, t_tetri **tetriminos, int size)
-{
-	unsigned int bb[16] = {0};
-	t_tetri **tm;
-
-	ft_memcpy(bb, bit_board, sizeof(*bb) * 16);
-	tm = tetriminos;
-	if ((*tm) == NULL)
-		return (1);
-	int res;
-	int res2;
-
-	res2 = 0;
-	res = 0;
-	int i = 0;
-	if (!find_place(bb, *tm, size))
+		i = 0;
+		while(i < tm->height)
 		{
-			return ((*tm)->symbol);
-		}
-		while(i < (*tm)->height)
-		{
-			bb[(*tm)->y + i] |= ((*tm)->bitfield[i] >> (*tm)->x);
+			bb[tm->y + i] ^= (tm->bitfield[i] >> tm->x);
 			++i;
 		}
-		res = solve_it(bb, tm + 1, size);
-		if (res == 1)
-			return (res);
-		else if(can_it_move((*tm)->bitfield, size, (*tm)->x) || (*tm)->y + (*tm)->height < size)
+	}
+
+	int fit_first_ln(unsigned int bb, t_tetri *tm)
+	{
+		if ((bb & (tm->bitfield[0] >> tm->x)) > 0)
+			return (0);
+		return (1);
+	}
+
+	int solve_it(unsigned int *bb, t_tetri **tm, int size)
+	{
+	if ((*tm) == NULL)
+		return (1);
+	while ((*tm)->y + (*tm)->height <= size)
+	{
+		while ((*tm)->x + (*tm)->width <= size)
 		{
-			if (can_it_move((*tm)->bitfield, size, (*tm)->x))
-				++(*tm)->x;
-			else if ((*tm)->y + (*tm)->height < size)
+			if (fit_first_ln(bb[(*tm)->y], *tm) 
+			&& fit_block(bb, *tm, (*tm)->y, (*tm)->x))
 			{
-				(*tm)->x = 0;
-				++(*tm)->y;
+				toggler(bb, *tm);
+				if (solve_it(bb, tm + 1, size) == 1)
+					return (1);
+				toggler(bb, *tm);
 			}
-			res2 = solve_it(bit_board, tm, size);
+			++(*tm)->x;
 		}
-	if (res2 == 1)
-		return (res2);
+		(*tm)->x = 0;
+		++(*tm)->y;
+	}
 	(*tm)->x = 0;
 	(*tm)->y = 0;
-	return (res);
-}
+	return (0);
+	}
 
 char *creat_array(int size)
 {
@@ -354,7 +333,7 @@ int main(int argc, char **argv)
 	block_n = bytes / 21 + 1;
 	size = 2;
 	while (size * size < block_n * 4)
-		++size;
+	 	++size;
 	while(res != 1)
 	{
 		res = solve_it(bit_board, tetriminos, size);  

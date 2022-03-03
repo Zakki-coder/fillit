@@ -1,4 +1,9 @@
 Memleaks
-Clean up alot
+exit?
+Makefile must compile without relinks, must contain all, clean, fclean, re.
+fillit binary must be in the root of repo
+author file with appropriate newlines
+All sources and headers in same folder, one folder for libft, one for fillit
+Check that allocations are protected
 What is max size?
 :)

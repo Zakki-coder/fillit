@@ -6,7 +6,7 @@
 #    By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/18 13:06:54 by jniemine          #+#    #+#              #
-#    Updated: 2022/03/03 17:23:22 by jniemine         ###   ########.fr        #
+#    Updated: 2022/03/04 13:27:44 by jniemine         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,16 +14,27 @@ NAME = fillit
 
 CFLAG = -Wall -Wextra -Werror
 
-INCLUDES = -I./ -I./libft/includes/
+INCLUDES =	-I./srcs/			\
+			-I./libft/includes/
 
-SRCS =	fillit.c			\
+SRCS =	srcs/bit_wizardry.c	\
+		srcs/limits.c		\
+		srcs/main.c			\
+		srcs/main_extra.c	\
+		srcs/parser.c		\
+		srcs/solver.c		\
 		libft/ft_putchar.c	\
 		libft/ft_putstr.c	\
 		libft/ft_memalloc.c	\
 		libft/ft_bzero.c	\
 		libft/ft_memset.c	\
 
-OBJ =	fillit.o		\
+OBJ =	bit_wizardry.o	\
+		limits.o		\
+		main.o			\
+		main_extra.o	\
+		parser.o		\
+		solver.o		\
 		ft_putchar.o	\
 		ft_putstr.o		\
 		ft_memalloc.o	\
@@ -35,9 +46,9 @@ all:
 	@gcc ${OBJ} -o ${NAME}
 
 clean:
-	@rm ${OBJ}
+	@rm -f ${OBJ}
 
 fclean: clean
-	@rm ${NAME}
+	@rm -f ${NAME}
 
 re: fclean all

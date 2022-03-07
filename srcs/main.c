@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:01:58 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/04 12:45:17 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:26:09 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	parse_input(char **argv, int argc, t_tetri **tm)
 	int		bytes;
 	char	buff[26 * 21 + 1];
 
-	bzero(buff, 26 * 21 + 1);
+	ft_bzero(buff, 26 * 21 + 1);
 	if (argc != 2)
 	{
 		ft_putstr("Usage: ./fillit [argument]\n");
@@ -102,14 +102,14 @@ int	main(int argc, char **argv)
 	int				block_n;
 
 	nullifier(tetriminos, 27);
-	bzero(bit_board, 16);
+	ft_bzero(bit_board, 16);
 	block_n = parse_input(argv, argc, tetriminos);
-	i = 0;
 	size = 2;
 	while (size * size < block_n * 4)
 		++size;
 	while (solve_it(bit_board, tetriminos, size) != 1)
 	{
+		i = 0;
 		++size;
 		while (i < 16)
 			bit_board[i++] = 0;

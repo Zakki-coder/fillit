@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 10:28:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/04 13:16:34 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/07 20:50:02 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 # include "../libft/includes/libft.h"
 # include <unistd.h>
-# include <sys/types.h>
-# include <sys/stat.h>
 # include <fcntl.h>
 # include <stdlib.h>
 

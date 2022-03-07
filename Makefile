@@ -6,7 +6,7 @@
 #    By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/18 13:06:54 by jniemine          #+#    #+#              #
-#    Updated: 2022/03/04 13:27:44 by jniemine         ###   ########.fr        #
+#    Updated: 2022/03/07 21:09:53 by jniemine         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,9 +41,11 @@ OBJ =	bit_wizardry.o	\
 		ft_bzero.o		\
 		ft_memset.o		\
 
-all:
+$(NAME):
 	@gcc -c ${SRCS} ${INCLUDES} 
 	@gcc ${OBJ} -o ${NAME}
+
+all: $(NAME)
 
 clean:
 	@rm -f ${OBJ}

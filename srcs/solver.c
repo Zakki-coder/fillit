@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:56:41 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/04 13:15:03 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:45:12 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ int	solve_it(unsigned int *bb, t_tetri **tm, int size)
 	if ((*tm) == NULL)
 		return (1);
 	(*tm)->y = 0;
+	if ((*tm)->prev_same != NULL)
+		(*tm)->y = (*tm)->prev_same->y;
 	while ((*tm)->y + (*tm)->height <= size)
 	{
 		(*tm)->x = 0;

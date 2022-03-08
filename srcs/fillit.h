@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 10:28:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/07 20:50:02 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:19:16 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,11 @@
 # include <fcntl.h>
 # include <stdlib.h>
 
-typedef struct s_tetrimino
+typedef struct s_tetrimino	t_tetri;
+
+struct s_tetrimino
 {
-	unsigned int	*bitfield;
+	unsigned int	bitfield[4];
 	int				x;
 	int				y;
 	int				x_min;
@@ -30,8 +32,10 @@ typedef struct s_tetrimino
 	int				height;
 	int				width;
 	char			symbol;
-}					t_tetri;
+	t_tetri			*prev_same;
+};
 
+int				has_seperating_nl(char *blocks, int bytes);
 void			nullifier(t_tetri **tm, int i);
 unsigned int	is_on(unsigned int bf, unsigned int n);
 int				fit_first_ln(unsigned int bb, t_tetri *tm);
@@ -43,5 +47,6 @@ int				check_blocks(char *blocks, int bytes, int i);
 int				validate_char(char c, int bytes);
 int				touch_count(char *block);
 int				solve_it(unsigned int *bb, t_tetri **tm, int size);
+void			search_similar(t_tetri **tm);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:01:58 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/07 21:26:09 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:09:44 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void	free_tetri(t_tetri **tm)
 {
 	while ((*tm) != NULL)
 	{
-		free((*tm)->bitfield);
 		free((*tm));
 		++tm;
 	}
@@ -76,19 +75,22 @@ int	parse_input(char **argv, int argc, t_tetri **tm)
 	ft_bzero(buff, 26 * 21 + 1);
 	if (argc != 2)
 	{
-		ft_putstr("Usage: ./fillit [argument]\n");
+		ft_putstr("Usage: ./fillit argument\n");
 		_exit (0);
 	}
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
-		_exit (-1);
-	bytes = read(fd, buff, 26 * 21);
-	close (fd);
-	if (check_blocks(buff, bytes, 0) != 1)
 	{
 		ft_putstr("error\n");
-		_exit (0);
+		_exit (-1);
 	}
+	bytes = read(fd, buff, 26 * 21);
+	if (bytes < 0 || check_blocks(buff, bytes, 0) != 1)
+	{
+		ft_putstr("error\n");
+		_exit (-1);
+	}
+	close (fd);
 	char_to_bit(buff, bytes, tm);
 	return (bytes / 21 + 1);
 }
@@ -104,6 +106,7 @@ int	main(int argc, char **argv)
 	nullifier(tetriminos, 27);
 	ft_bzero(bit_board, 16);
 	block_n = parse_input(argv, argc, tetriminos);
+	search_similar(tetriminos);
 	size = 2;
 	while (size * size < block_n * 4)
 		++size;

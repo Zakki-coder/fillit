@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:52:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/07 21:03:21 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:10:10 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@ t_tetri	*reader(char *arr)
 	tetri = limits(arr, tetri);
 	tetri->width = tetri->x_max - tetri->x_min + 1;
 	tetri->height = tetri->y_max - tetri->y_min + 1;
-	tetri->bitfield = ft_memalloc(sizeof(unsigned int) * 4);
-	if (tetri->bitfield == NULL)
-		_exit(-1);
 	while (i < 20)
 	{
 		row = i / 5;
@@ -74,6 +71,8 @@ int	check_blocks(char *blocks, int bytes, int i)
 	char	block[21];
 
 	if (bytes > 26 * 21 - 1 || bytes % 21 != 20)
+		return (-1);
+	if (!has_seperating_nl(blocks, bytes))
 		return (-1);
 	while (bytes > 0)
 	{

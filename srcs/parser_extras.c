@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:08:35 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/08 18:21:42 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:27:05 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ void	search_similar(t_tetri **tm)
 				tm[i_tm]->prev_same = tm[i];
 				break ;
 			}
+			else
+				tm[i_tm]->prev_same = NULL;
 			++i;
 		}
 		++i_tm;

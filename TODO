@@ -1,4 +1,3 @@
-TEST LEAKS WITH ERROR FILES AND NO FILE
 DONE Memleaks
 DONE exit?
 MAYBE?? Makefile must compile without relinks, must contain all, clean, fclean, re.

@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:08:35 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/09 09:47:39 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 23:41:26 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	search_similar(t_tetri **tm)
 		i = 0;
 		while (i_tm > 0 && i < i_tm)
 		{
-			if (compare_bitfields(tm[i_tm]->bitfield, tm[i]->bitfield))
+			if (compare_bitfields(tm[i_tm]->bf, tm[i]->bf))
 			{
 				tm[i_tm]->prev_same = tm[i];
 				break ;

@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:56:41 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 14:55:08 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 23:47:33 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ int	fit_block(unsigned int *bb, t_tetri *tm, int y, int offset)
 	int	i;
 
 	i = 0;
-	while (tm->bitfield[i] != 0 && i < 4)
+	while (tm->bf[i] != 0 && i < 4)
 	{
-		if ((bb[y + i] & ((tm->bitfield[i] >> offset))) == 0)
+		if ((bb[y + i] & ((tm->bf[i] >> offset))) == 0)
 			++i;
 		else
 			return (0);
@@ -27,31 +27,30 @@ int	fit_block(unsigned int *bb, t_tetri *tm, int y, int offset)
 	return (1);
 }
 
-int	solve_it(unsigned int *bb, t_tetri **tm, int size)
+int	solve_it(unsigned int *bb, t_tetri **tm, int size, int i)
 {
 	if ((*tm) == NULL)
 		return (1);
-	(*tm)->y = 0;
+	(*tm)->y = -1;
 	if ((*tm)->prev_same != NULL)
-		(*tm)->y = (*tm)->prev_same->y;
-	while ((*tm)->y + (*tm)->height <= size)
+		(*tm)->y = (*tm)->prev_same->y - 1;
+	while (++(*tm)->y + (*tm)->height <= size)
 	{
-		(*tm)->x = 0;
-		while ((*tm)->x + (*tm)->width <= size)
+		(*tm)->x = -1;
+		while (++(*tm)->x + (*tm)->width <= size)
 		{
-			if ((bb[(*tm)->y] & ((*tm)->bitfield[0] >> (*tm)->x)) == 0
-				&& fit_block(bb, *tm, (*tm)->y, (*tm)->x))
-			{
-				toggler(bb, *tm);
-				if (solve_it(bb, tm + 1, size) == 1)
-					return (1);
-				toggler(bb, *tm);
-			}
-			++(*tm)->x;
+			i = 0;
+			if ((bb[(*tm)->y] & ((*tm)->bf[0] >> (*tm)->x)) == 0 && ++i > 0)
+				while (i < (*tm)->height && (bb[(*tm)->y + i]
+						& ((*tm)->bf[i] >> (*tm)->x)) == 0)
+					++i;
+			if (i != (*tm)->height)
+				continue ;
+			toggler(bb, *tm);
+			if (solve_it(bb, tm + 1, size, 0) == 1)
+				return (1);
+			toggler(bb, *tm);
 		}
-		++(*tm)->y;
 	}
-	(*tm)->x = 0;
-	(*tm)->y = 0;
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:52:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 17:51:35 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 23:42:12 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_tetri	*reader(char *arr)
 		row = i / 5;
 		column = i % 5;
 		if (arr[i] == '#')
-			tetri->bitfield[row - tetri->y_min]
+			tetri->bf[row - tetri->y_min]
 				|= flip_bit(0, 31 - (column - tetri->x_min));
 		++i;
 	}

@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:01:58 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 13:38:53 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 23:41:46 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	printer(int size, t_tetri **tm)
 		start = (*tm)->y * (size + 1) + (*tm)->x;
 		while (i / 4 < (*tm)->height)
 		{
-			if (is_on((*tm)->bitfield[i / 4], 31 - (i % 4)))
+			if (is_on((*tm)->bf[i / 4], 31 - (i % 4)))
 				board[start + (i / 4 * (size + 1)) + (i % 4)] = (*tm)->symbol;
 			++i;
 		}
@@ -110,7 +110,7 @@ int	main(int argc, char **argv)
 	size = 2;
 	while (size * size < block_n * 4)
 		++size;
-	while (solve_it(bit_board, tetriminos, size) != 1)
+	while (solve_it(bit_board, tetriminos, size, 0) != 1)
 	{
 		i = 0;
 		++size;

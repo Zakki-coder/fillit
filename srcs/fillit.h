@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 10:28:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 13:57:48 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 23:39:31 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_tetrimino	t_tetri;
 
 struct s_tetrimino
 {
-	unsigned int	bitfield[4];
+	unsigned int	bf[4];
 	int				x;
 	int				y;
 	int				x_min;
@@ -46,7 +46,7 @@ void			char_to_bit(char *buff, int bytes, t_tetri **tetriminos);
 int				check_blocks(char *blocks, int bytes, int i);
 int				validate_char(char c, int bytes);
 int				touch_count(char *block);
-int				solve_it(unsigned int *bb, t_tetri **tm, int size);
+int				solve_it(unsigned int *bb, t_tetri **tm, int size, int i);
 void			search_similar(t_tetri **tm);
 
 #endif

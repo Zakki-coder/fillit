@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:56:41 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/08 18:45:12 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 14:55:08 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	solve_it(unsigned int *bb, t_tetri **tm, int size)
 		(*tm)->x = 0;
 		while ((*tm)->x + (*tm)->width <= size)
 		{
-			if (fit_first_ln(bb[(*tm)->y], *tm)
+			if ((bb[(*tm)->y] & ((*tm)->bitfield[0] >> (*tm)->x)) == 0
 				&& fit_block(bb, *tm, (*tm)->y, (*tm)->x))
 			{
 				toggler(bb, *tm);

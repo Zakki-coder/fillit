@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:52:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/08 18:10:10 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 17:51:35 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_tetri	*reader(char *arr)
 
 	tetri = (t_tetri *)ft_memalloc(sizeof(*tetri));
 	if (!tetri)
-		_exit(-1);
+		exit(-1);
 	i = 0;
 	tetri = limits(arr, tetri);
 	tetri->width = tetri->x_max - tetri->x_min + 1;
@@ -70,24 +70,24 @@ int	check_blocks(char *blocks, int bytes, int i)
 {
 	char	block[21];
 
-	if (bytes > 26 * 21 - 1 || bytes % 21 != 20)
-		return (-1);
-	if (!has_seperating_nl(blocks, bytes))
+	if (bytes > 26 * 21 - 1 || bytes % 21 != 20
+		|| !has_seperating_nl(blocks, bytes))
 		return (-1);
 	while (bytes > 0)
 	{
 		while (i < 20)
 		{
 			if (!validate_char(blocks[i], bytes))
-				return (-2);
-			if (blocks[i] == '\n' && (i + 1) % 5 != 0)
 				return (-3);
+			if (blocks[i] == '\n' && (i + 1) % 5 != 0
+				|| (i + 1) % 5 == 0 && blocks[i] != '\n')
+				return (-4);
 			block[i] = blocks[i];
 			++i;
 			--bytes;
 		}
 		if (!touch_count(block))
-			return (-4);
+			return (-5);
 		i = 0;
 		blocks += 21;
 		--bytes;

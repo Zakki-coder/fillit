@@ -1,8 +1,0 @@
-DONE Memleaks
-DONE exit?
-MAYBE?? Makefile must compile without relinks, must contain all, clean, fclean, re.
-MAYBE?? fillit binary must be in the root of repo
-DONE author file with appropriate newlines
-DONE All sources and headers in same folder, one folder for libft, one for fillit
-DONE Check that allocations are protected
-DONE Open protect

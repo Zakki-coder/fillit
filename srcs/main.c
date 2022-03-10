@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:01:58 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/08 18:09:44 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/10 13:38:53 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*create_array(int size)
 	i = 0;
 	board = (char *)ft_memalloc(sizeof(*board) * (size * size) + size + 1);
 	if (board == NULL)
-		_exit(-1);
+		exit(-1);
 	ft_bzero(board, sizeof(*board) * size * size + size);
 	ft_memset(board, '.', sizeof(*board) * size * size + size);
 	while (i * (size + 1) < size * size + size)
@@ -76,19 +76,19 @@ int	parse_input(char **argv, int argc, t_tetri **tm)
 	if (argc != 2)
 	{
 		ft_putstr("Usage: ./fillit argument\n");
-		_exit (0);
+		exit (0);
 	}
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
 	{
 		ft_putstr("error\n");
-		_exit (-1);
+		exit (-1);
 	}
 	bytes = read(fd, buff, 26 * 21);
 	if (bytes < 0 || check_blocks(buff, bytes, 0) != 1)
 	{
 		ft_putstr("error\n");
-		_exit (-1);
+		exit (-1);
 	}
 	close (fd);
 	char_to_bit(buff, bytes, tm);

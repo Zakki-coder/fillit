@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:52:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/14 10:17:39 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/14 13:25:47 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ int	check_blocks(char *blocks, int bytes, int i)
 		{
 			if (!validate_char(blocks[i], bytes))
 				return (-3);
-			if (blocks[i] == '\n' && (i + 1) % 5 != 0
-				|| (i + 1) % 5 == 0 && blocks[i] != '\n')
+			if ((blocks[i] == '\n' && (i + 1) % 5 != 0)
+				|| ((i + 1) % 5 == 0 && blocks[i] != '\n'))
 				return (-4);
 			block[i] = blocks[i];
 			++i;

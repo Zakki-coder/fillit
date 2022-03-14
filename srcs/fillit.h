@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/16 10:28:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 23:39:31 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/14 10:35:52 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,10 @@ struct s_tetrimino
 	t_tetri			*prev_same;
 };
 
-int				has_seperating_nl(char *blocks, int bytes);
-void			nullifier(t_tetri **tm, int i);
-unsigned int	is_on(unsigned int bf, unsigned int n);
-int				fit_first_ln(unsigned int bb, t_tetri *tm);
-void			toggler(unsigned int *bb, t_tetri *tm);
-unsigned int	flip_bit(unsigned int bf, unsigned int n);
-t_tetri			*limits(char *arr, t_tetri *tetri);
+void			printer(int size, t_tetri **tm);
+void			free_tetri(t_tetri **tm);
 void			char_to_bit(char *buff, int bytes, t_tetri **tetriminos);
 int				check_blocks(char *blocks, int bytes, int i);
-int				validate_char(char c, int bytes);
-int				touch_count(char *block);
 int				solve_it(unsigned int *bb, t_tetri **tm, int size, int i);
-void			search_similar(t_tetri **tm);
 
 #endif

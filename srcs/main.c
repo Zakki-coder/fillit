@@ -6,64 +6,19 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:01:58 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 23:41:46 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/14 10:04:02 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-char	*create_array(int size)
+void	nullifier(t_tetri **tm, int i)
 {
-	char	*board;
-	int		i;
-
-	i = 0;
-	board = (char *)ft_memalloc(sizeof(*board) * (size * size) + size + 1);
-	if (board == NULL)
-		exit(-1);
-	ft_bzero(board, sizeof(*board) * size * size + size);
-	ft_memset(board, '.', sizeof(*board) * size * size + size);
-	while (i * (size + 1) < size * size + size)
+	while (i)
 	{
-		board[i * (size + 1) + (size)] = '\n';
-		++i;
+		--i;
+		tm[i] = NULL;
 	}
-	return (board);
-}
-
-void	printer(int size, t_tetri **tm)
-{
-	int		i;
-	int		start;
-	char	*board;
-
-	board = create_array(size);
-	i = 0;
-	while (*tm != NULL)
-	{
-		start = (*tm)->y * (size + 1) + (*tm)->x;
-		while (i / 4 < (*tm)->height)
-		{
-			if (is_on((*tm)->bf[i / 4], 31 - (i % 4)))
-				board[start + (i / 4 * (size + 1)) + (i % 4)] = (*tm)->symbol;
-			++i;
-		}
-		i = 0;
-		++tm;
-	}
-	ft_putstr(board);
-	free(board);
-	return ;
-}
-
-void	free_tetri(t_tetri **tm)
-{
-	while ((*tm) != NULL)
-	{
-		free((*tm));
-		++tm;
-	}
-	return ;
 }
 
 int	parse_input(char **argv, int argc, t_tetri **tm)
@@ -93,6 +48,45 @@ int	parse_input(char **argv, int argc, t_tetri **tm)
 	close (fd);
 	char_to_bit(buff, bytes, tm);
 	return (bytes / 21 + 1);
+}
+
+int	compare_bitfields(unsigned int *bf1, unsigned int *bf2)
+{
+	int	i;
+
+	i = 0;
+	while (i < 4)
+	{
+		if (bf1[i] != bf2[i])
+			return (0);
+		++i;
+	}
+	return (1);
+}
+
+void	search_similar(t_tetri **tm)
+{
+	int	i_tm;
+	int	i;
+
+	i_tm = 0;
+	i = 0;
+	while (tm[i] != NULL)
+		tm[i++]->prev_same = NULL;
+	while (tm[i_tm] != NULL)
+	{
+		i = 0;
+		while (i_tm > 0 && i < i_tm)
+		{
+			if (compare_bitfields(tm[i_tm]->bf, tm[i]->bf))
+			{
+				tm[i_tm]->prev_same = tm[i];
+				break ;
+			}
+			++i;
+		}
+		++i_tm;
+	}
 }
 
 int	main(int argc, char **argv)

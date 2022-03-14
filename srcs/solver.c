@@ -6,25 +6,22 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:56:41 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 23:47:33 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/14 10:37:46 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-int	fit_block(unsigned int *bb, t_tetri *tm, int y, int offset)
+void	toggler(unsigned int *bb, t_tetri *tm)
 {
 	int	i;
 
 	i = 0;
-	while (tm->bf[i] != 0 && i < 4)
+	while (i < tm->height)
 	{
-		if ((bb[y + i] & ((tm->bf[i] >> offset))) == 0)
-			++i;
-		else
-			return (0);
+		bb[tm->y + i] ^= (tm->bf[i] >> tm->x);
+		++i;
 	}
-	return (1);
 }
 
 int	solve_it(unsigned int *bb, t_tetri **tm, int size, int i)

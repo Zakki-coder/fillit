@@ -6,7 +6,7 @@
 #    By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/18 13:06:54 by jniemine          #+#    #+#              #
-#    Updated: 2022/03/08 19:05:48 by jniemine         ###   ########.fr        #
+#    Updated: 2022/03/14 10:35:08 by jniemine         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,7 @@ CFLAG = -Wall -Wextra -Werror
 INCLUDES =	-I./srcs/			\
 			-I./libft/includes/
 
-SRCS =	srcs/bit_wizardry.c	\
-		srcs/parser_extras.c\
+SRCS =	srcs/parser_extras.c\
 		srcs/main.c			\
 		srcs/main_extra.c	\
 		srcs/parser.c		\
@@ -29,8 +28,7 @@ SRCS =	srcs/bit_wizardry.c	\
 		libft/ft_bzero.c	\
 		libft/ft_memset.c	\
 
-OBJ =	bit_wizardry.o	\
-		parser_extras.o	\
+OBJ =	parser_extras.o	\
 		main.o			\
 		main_extra.o	\
 		parser.o		\

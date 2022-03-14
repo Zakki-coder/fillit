@@ -12,6 +12,23 @@
 
 #include "fillit.h"
 
+/*
+int	fit_block(unsigned int *bb, t_tetri *tm, int y, int offset)
+{
+	int	i;
+
+	i = 0;
+	while (tm->bf[i] != 0 && i < 4)
+	{
+		if ((bb[y + i] & ((tm->bf[i] >> offset))) == 0)
+			++i;
+		else
+			return (0);
+	}
+	return (1);
+}
+*/
+
 unsigned int	is_on(unsigned int bf, unsigned int n)
 {
 	return (bf >> n & (unsigned int)1);

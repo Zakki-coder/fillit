@@ -6,91 +6,22 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:52:13 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 23:42:12 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/14 10:17:39 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-t_tetri	*reader(char *arr)
+int	has_seperating_nl(char *blocks, int bytes)
 {
-	t_tetri			*tetri;
-	int				i;
-	int				row;
-	int				column;
+	int	i;
 
-	tetri = (t_tetri *)ft_memalloc(sizeof(*tetri));
-	if (!tetri)
-		exit(-1);
 	i = 0;
-	tetri = limits(arr, tetri);
-	tetri->width = tetri->x_max - tetri->x_min + 1;
-	tetri->height = tetri->y_max - tetri->y_min + 1;
-	while (i < 20)
+	while (i < bytes)
 	{
-		row = i / 5;
-		column = i % 5;
-		if (arr[i] == '#')
-			tetri->bf[row - tetri->y_min]
-				|= flip_bit(0, 31 - (column - tetri->x_min));
+		if ((i + 1) % 21 == 0 && blocks[i] != '\n')
+			return (0);
 		++i;
-	}
-	return (tetri);
-}
-
-void	char_to_bit(char *buff, int bytes, t_tetri **tetriminos)
-{
-	char	block[21];
-	char	sym;
-	int		i;
-	t_tetri	**tt;
-
-	ft_bzero(block, 21);
-	sym = 'A';
-	tt = tetriminos;
-	i = 0;
-	bytes = bytes - bytes / 21 + 1;
-	while (bytes--)
-	{
-		block[i] = buff[i];
-		++i;
-		if (i == 20)
-		{
-			*tt = reader(block);
-			(*tt)->symbol = sym++;
-			tt++;
-			i = 0;
-			buff += 21;
-		}
-	}
-	return ;
-}
-
-int	check_blocks(char *blocks, int bytes, int i)
-{
-	char	block[21];
-
-	if (bytes > 26 * 21 - 1 || bytes % 21 != 20
-		|| !has_seperating_nl(blocks, bytes))
-		return (-1);
-	while (bytes > 0)
-	{
-		while (i < 20)
-		{
-			if (!validate_char(blocks[i], bytes))
-				return (-3);
-			if (blocks[i] == '\n' && (i + 1) % 5 != 0
-				|| (i + 1) % 5 == 0 && blocks[i] != '\n')
-				return (-4);
-			block[i] = blocks[i];
-			++i;
-			--bytes;
-		}
-		if (!touch_count(block))
-			return (-5);
-		i = 0;
-		blocks += 21;
-		--bytes;
 	}
 	return (1);
 }
@@ -123,4 +54,33 @@ int	touch_count(char *block)
 		++i;
 	}
 	return (count == 6 || count == 8);
+}
+
+int	check_blocks(char *blocks, int bytes, int i)
+{
+	char	block[21];
+
+	if (bytes > 26 * 21 - 1 || bytes % 21 != 20
+		|| !has_seperating_nl(blocks, bytes))
+		return (-1);
+	while (bytes > 0)
+	{
+		while (i < 20)
+		{
+			if (!validate_char(blocks[i], bytes))
+				return (-3);
+			if (blocks[i] == '\n' && (i + 1) % 5 != 0
+				|| (i + 1) % 5 == 0 && blocks[i] != '\n')
+				return (-4);
+			block[i] = blocks[i];
+			++i;
+			--bytes;
+		}
+		if (!touch_count(block))
+			return (-5);
+		i = 0;
+		blocks += 21;
+		--bytes;
+	}
+	return (1);
 }

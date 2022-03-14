@@ -6,7 +6,7 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:08:35 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/10 23:41:26 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/14 10:33:44 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,55 +39,61 @@ t_tetri	*limits(char *arr, t_tetri *tetri)
 	return (tetri);
 }
 
-int	has_seperating_nl(char *blocks, int bytes)
+unsigned int	flip_bit(unsigned int bf, unsigned int n)
 {
-	int	i;
-
-	i = 0;
-	while (i < bytes)
-	{
-		if ((i + 1) % 21 == 0 && blocks[i] != '\n')
-			return (0);
-		++i;
-	}
-	return (1);
+	return (bf |= ((unsigned int)1 << n));
 }
 
-int	compare_bitfields(unsigned int *bf1, unsigned int *bf2)
+t_tetri	*reader(char *arr)
 {
-	int	i;
+	t_tetri			*tetri;
+	int				i;
+	int				row;
+	int				column;
 
+	tetri = (t_tetri *)ft_memalloc(sizeof(*tetri));
+	if (!tetri)
+		exit(-1);
 	i = 0;
-	while (i < 4)
+	tetri = limits(arr, tetri);
+	tetri->width = tetri->x_max - tetri->x_min + 1;
+	tetri->height = tetri->y_max - tetri->y_min + 1;
+	while (i < 20)
 	{
-		if (bf1[i] != bf2[i])
-			return (0);
+		row = i / 5;
+		column = i % 5;
+		if (arr[i] == '#')
+			tetri->bf[row - tetri->y_min]
+				|= flip_bit(0, 31 - (column - tetri->x_min));
 		++i;
 	}
-	return (1);
+	return (tetri);
 }
 
-void	search_similar(t_tetri **tm)
+void	char_to_bit(char *buff, int bytes, t_tetri **tetriminos)
 {
-	int	i_tm;
-	int	i;
+	char	block[21];
+	char	sym;
+	int		i;
+	t_tetri	**tt;
 
-	i_tm = 0;
+	ft_bzero(block, 21);
+	sym = 'A';
+	tt = tetriminos;
 	i = 0;
-	while (tm[i] != NULL)
-		tm[i++]->prev_same = NULL;
-	while (tm[i_tm] != NULL)
+	bytes = bytes - bytes / 21 + 1;
+	while (bytes--)
 	{
-		i = 0;
-		while (i_tm > 0 && i < i_tm)
+		block[i] = buff[i];
+		++i;
+		if (i == 20)
 		{
-			if (compare_bitfields(tm[i_tm]->bf, tm[i]->bf))
-			{
-				tm[i_tm]->prev_same = tm[i];
-				break ;
-			}
-			++i;
+			*tt = reader(block);
+			(*tt)->symbol = sym++;
+			tt++;
+			i = 0;
+			buff += 21;
 		}
-		++i_tm;
 	}
+	return ;
 }

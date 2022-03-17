@@ -6,13 +6,13 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:56:41 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/14 10:37:46 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/17 07:43:12 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-void	toggler(unsigned int *bb, t_tetri *tm)
+static void	toggler(unsigned int *bb, t_tetri *tm)
 {
 	int	i;
 

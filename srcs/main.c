@@ -6,13 +6,23 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:01:58 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/14 10:04:02 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/17 07:45:58 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-void	nullifier(t_tetri **tm, int i)
+static void	free_tetri(t_tetri **tm)
+{
+	while ((*tm) != NULL)
+	{
+		free((*tm));
+		++tm;
+	}
+	return ;
+}
+
+static void	nullifier(t_tetri **tm, int i)
 {
 	while (i)
 	{
@@ -21,36 +31,7 @@ void	nullifier(t_tetri **tm, int i)
 	}
 }
 
-int	parse_input(char **argv, int argc, t_tetri **tm)
-{
-	int		fd;
-	int		bytes;
-	char	buff[26 * 21 + 1];
-
-	ft_bzero(buff, 26 * 21 + 1);
-	if (argc != 2)
-	{
-		ft_putstr("Usage: ./fillit argument\n");
-		exit (0);
-	}
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0)
-	{
-		ft_putstr("error\n");
-		exit (-1);
-	}
-	bytes = read(fd, buff, 26 * 21);
-	if (bytes < 0 || check_blocks(buff, bytes, 0) != 1)
-	{
-		ft_putstr("error\n");
-		exit (-1);
-	}
-	close (fd);
-	char_to_bit(buff, bytes, tm);
-	return (bytes / 21 + 1);
-}
-
-int	compare_bitfields(unsigned int *bf1, unsigned int *bf2)
+static int	compare_bitfields(unsigned int *bf1, unsigned int *bf2)
 {
 	int	i;
 
@@ -64,7 +45,7 @@ int	compare_bitfields(unsigned int *bf1, unsigned int *bf2)
 	return (1);
 }
 
-void	search_similar(t_tetri **tm)
+static void	search_similar(t_tetri **tm)
 {
 	int	i_tm;
 	int	i;

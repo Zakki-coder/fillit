@@ -6,13 +6,13 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 21:08:35 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/14 10:33:44 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/17 07:42:44 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-t_tetri	*limits(char *arr, t_tetri *tetri)
+static t_tetri	*limits(char *arr, t_tetri *tetri)
 {
 	int	i;
 
@@ -39,12 +39,12 @@ t_tetri	*limits(char *arr, t_tetri *tetri)
 	return (tetri);
 }
 
-unsigned int	flip_bit(unsigned int bf, unsigned int n)
+static unsigned int	flip_bit(unsigned int bf, unsigned int n)
 {
 	return (bf |= ((unsigned int)1 << n));
 }
 
-t_tetri	*reader(char *arr)
+static t_tetri	*reader(char *arr)
 {
 	t_tetri			*tetri;
 	int				i;

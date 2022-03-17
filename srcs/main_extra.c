@@ -6,18 +6,18 @@
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/04 12:32:03 by jniemine          #+#    #+#             */
-/*   Updated: 2022/03/14 10:32:18 by jniemine         ###   ########.fr       */
+/*   Updated: 2022/03/17 07:49:51 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
 
-unsigned int	is_on(unsigned int bf, unsigned int n)
+static unsigned int	is_on(unsigned int bf, unsigned int n)
 {
 	return (bf >> n & (unsigned int)1);
 }
 
-char	*create_array(int size)
+static char	*create_array(int size)
 {
 	char	*board;
 	int		i;
@@ -58,15 +58,5 @@ void	printer(int size, t_tetri **tm)
 	}
 	ft_putstr(board);
 	free(board);
-	return ;
-}
-
-void	free_tetri(t_tetri **tm)
-{
-	while ((*tm) != NULL)
-	{
-		free((*tm));
-		++tm;
-	}
 	return ;
 }

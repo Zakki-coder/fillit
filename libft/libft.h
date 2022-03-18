@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_tolower.c                                       :+:      :+:    :+:   */
+/*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jniemine <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/10 21:24:19 by jniemine          #+#    #+#             */
-/*   Updated: 2021/11/10 21:29:38 by jniemine         ###   ########.fr       */
+/*   Created: 2021/11/02 09:53:35 by jniemine          #+#    #+#             */
+/*   Updated: 2022/03/18 15:53:11 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_tolower(int c)
-{
-	int	diff;
+#ifndef LIBFT_H
+# define LIBFT_H
 
-	diff = 'a' - 'A';
-	if (c >= 'A' && c <= 'Z')
-		return (c + diff);
-	return (c);
-}
+void	*ft_memset(void *s, int c, size_t n);
+void	ft_bzero(void *s, size_t n);
+void	*ft_memalloc(size_t size);
+void	ft_putchar(char c);
+void	ft_putstr(char const *s);
+#endif

@@ -15,4 +15,4 @@ make\
 For example:\
 ./fillit test/Valid_blocks/26Pieces\
 
-Hope you have as fun using it as I have making it!
+Hope you have as fun using it as I had making it!
